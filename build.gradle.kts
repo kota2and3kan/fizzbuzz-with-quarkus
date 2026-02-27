@@ -36,13 +36,12 @@ tasks.withType<JavaCompile> {
 
 val os = OperatingSystem.current()
 if (os.isLinux) {
-    // Use static linking on Linux to create a fully self-contained native image.
+    // Use Mandrel container to build a native image on Linux.
     System.setProperty("quarkus.native.container-build", "true")
-    System.setProperty("quarkus.native.builder-image", "graalvm")
+    System.setProperty("quarkus.native.builder-image", "mandrel")
 } else if (os.isMacOsX) {
-    // Do not use static linking on macOS.
+    // Use GraalVM to build a native image on macOS. Don't use container image to build.
     System.setProperty("quarkus.native.container-build", "false")
-    System.setProperty("quarkus.native.additional-build-args", "")
 } else if (os.isWindows) {
     // This project does not support building native images on Windows at this time.
 }
