@@ -1,74 +1,40 @@
 # FizzBuzz with Quarkus
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+This is a simple FizzBuzz command created by using [Quarkus](https://quarkus.io/).
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Install
 
-## Running the application in dev mode
+You can download a native binary (executable file) from [releases](https://github.com/kota2and3kan/fizzbuzz-with-quarkus/releases).
 
-You can run your application in dev mode that enables live coding using:
+## Build
 
-```shell script
-./gradlew quarkusDev
-```
+### Native Image
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
-
-## Packaging and running the application
-
-The application can be packaged using:
-
-```shell script
+```shell
 ./gradlew build
 ```
 
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
+> Note: Native image build is enabled by default in [`application.properties`](./src/main/resources/application.properties). If you have changed this setting, add `-Dquarkus.native.enabled=true` to the command.
 
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
+### Uber Jar
 
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./gradlew build -Dquarkus.package.jar.type=uber-jar
+```shell
+./gradlew build \
+  -Dquarkus.native.enabled=false \
+  -Dquarkus.package.jar.enabled=true \
+  -Dquarkus.package.jar.type=uber-jar
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
+## Usage
 
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./gradlew build -Dquarkus.native.enabled=true
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./build/fizzbuzz-with-quarkus-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/gradle-tooling>.
-
-## Related Guides
-
-- Picocli ([guide](https://quarkus.io/guides/picocli)): Develop command line applications with Picocli
-
-## Provided Code
-
-### Picocli Example
-
-Hello and goodbye are civilization fundamentals. Let's not forget it with this example picocli application by changing the <code>command</code> and <code>parameters</code>.
-
-[Related guide section...](https://quarkus.io/guides/picocli#command-line-application-with-multiple-commands)
-
-Also for picocli applications the dev mode is supported. When running dev mode, the picocli application is executed and on press of the Enter key, is restarted.
-
-As picocli applications will often require arguments to be passed on the commandline, this is also possible in dev mode via:
-
-```shell script
-./gradlew quarkusDev --quarkus-args='Quarky'
+```shell
+$ fizzbuzz --help
+Usage: fizzbuzz [-hV] [-b=<buzz>] [-e=<end>] [-f=<fizz>] [-s=<start>]
+  -b, --buzz=<buzz>     Output for multiples of 5
+  -e, --end=<end>       End number. Must be greater than 0 and greater than or
+                          equal to start.
+  -f, --fizz=<fizz>     Output for multiples of 3
+  -h, --help            Show this help message and exit.
+  -s, --start=<start>   Start number. Must be greater than 0.
+  -V, --version         Print version information and exit.
 ```
