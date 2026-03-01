@@ -1,0 +1,72 @@
+name: Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+"
+
+permissions:
+  contents: write
+
+jobs:
+  createRelease:
+    name: Create Release
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Create GitHub Release
+        run: gh release create "${{ github.ref_name }}" --latest --generate-notes --verify-tag
+
+  buildAndUploadAssets:
+    needs: createRelease
+    name: Build and upload asset for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            display_label: linux-amd64
+            asset_name: fizzbuzz-linux-amd64.tar.gz
+          - os: macos-latest
+            display_label: macos-arm64
+            asset_name: fizzbuzz-macos-arm64.tar.gz
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # In case of Linux, we use GraalVM as the JDK to run Gradle, and we use the Mandrel container to build the native image.
+      # In case of macOS, we use GraalVM for both running Gradle and building the native image.
+      - name: Setup GraalVM
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: "25"
+          distribution: "graalvm-community"
+          # If you want to build a native image with the --static and --libc=musl option on Linux in the future, you need to set this option to true and use the GraalVM directly on the GitHub Actions runner instead of using the Mandrel container.
+          # Note that the fully static native executables support is experimental in Quarkus, for now.
+          # https://quarkus.io/guides/building-native-image#build-fully-static-native-executables
+          native-image-musl: false
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Compile Native Image
+        run: ./gradlew build
+
+      - name: Run Built Native Image
+        run: ./build/fizzbuzz
+
+      - name: Create tar.gz artifact
+        run: tar czf "${{ matrix.asset_name }}" -C ./build/ fizzbuzz
+
+      - name: Upload Asset to Release
+        run: gh release upload "${{ github.ref_name }}" "${{ matrix.asset_name }}#${{ matrix.display_label }}" --clobber
