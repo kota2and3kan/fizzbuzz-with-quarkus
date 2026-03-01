@@ -20,14 +20,14 @@ public class FizzBuzzOptions {
 
   @CommandLine.Option(
       names = {"-f", "--fizz"},
-      description = "Output for multiples of 3",
+      description = "Output for multiples of 3.",
       required = false,
       defaultValue = "Fizz")
   String fizz;
 
   @CommandLine.Option(
       names = {"-b", "--buzz"},
-      description = "Output for multiples of 5",
+      description = "Output for multiples of 5.",
       required = false,
       defaultValue = "Buzz")
   String buzz;

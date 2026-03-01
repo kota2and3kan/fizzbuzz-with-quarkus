@@ -30,10 +30,10 @@ You can download a native binary (executable file) from [releases](https://githu
 ```shell
 $ fizzbuzz --help
 Usage: fizzbuzz [-hV] [-b=<buzz>] [-e=<end>] [-f=<fizz>] [-s=<start>]
-  -b, --buzz=<buzz>     Output for multiples of 5
+  -b, --buzz=<buzz>     Output for multiples of 5.
   -e, --end=<end>       End number. Must be greater than 0 and greater than or
                           equal to start.
-  -f, --fizz=<fizz>     Output for multiples of 3
+  -f, --fizz=<fizz>     Output for multiples of 3.
   -h, --help            Show this help message and exit.
   -s, --start=<start>   Start number. Must be greater than 0.
   -V, --version         Print version information and exit.
